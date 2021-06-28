@@ -7,7 +7,7 @@
     $myfile = fopen("./input/input.txt", "r") or die("Unable to open file!");
 
     $xml = new XMLWriter;
-    $xml->openURI('file:///C:/xampp/htdocs/denemeler/output/output.xml');
+    $xml->openURI('file:///C:/xampp/htdocs/PHP-Challenge/output/output.xml');
     $xml->setIndent(true); // makes output cleaner
 
     $xml->startElement('order');
