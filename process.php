@@ -9,7 +9,7 @@
     $english   = array("i", "g", "u", "s", "o", "c", "C", "S", "I", "U", "O"); //english cooridinators letters
 
     //Get a list of file paths using the glob function.
-    $fileList = glob('input/*');
+    $fileList = glob('input/*.txt');
 
     //Loop through the array that glob returned.
     foreach ($fileList as $filename) {
