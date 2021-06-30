@@ -8,7 +8,16 @@
     $turkish = array("ı", "ğ", "ü", "ş", "ö", "ç", "Ç", "Ş", "İ", "Ü", "Ö"); //turkish letters
     $english   = array("i", "g", "u", "s", "o", "c", "C", "S", "I", "U", "O"); //english cooridinators letters
 
-    $myfile = fopen(__DIR__ . "./input/input.txt", "r") or die("Unable to open file!");
+    //Get a list of file paths using the glob function.
+    $fileList = glob('input/*');
+
+    //Loop through the array that glob returned.
+    foreach ($fileList as $filename) {
+        if ($filename == "input/input.txt") {
+            $myfile = fopen(__DIR__ . "./input/input.txt", "r") or die("Unable to open file!");
+            break;
+        }
+    }
 
     $xml = new XMLWriter;
     $xml->openURI(__DIR__ . './output/output.xml');
@@ -17,9 +26,9 @@
     $xml->startElement('order');
     $xml->startElement('header');
 
-    $line = fgetcsv($myfile, 100, ";");
+    $line = fgetcsv($myfile, 0, ";");
 
-    $data = fgetcsv($myfile, 100, ";");
+    $data = fgetcsv($myfile, 0, ";");
 
     $xml->writeElement($line[0], $data[0]);
     $xml->writeElement($line[1], $data[1]);
@@ -32,11 +41,11 @@
     $xml->writeElement($line[4], $data[4]);
     $xml->endElement();
 
-    $line = fgetcsv($myfile, 1000, ";");
+    $line = fgetcsv($myfile, 0, ";");
 
     $xml->startElement('lines');
 
-    while ($data = fgetcsv($myfile, 100, ";")) {
+    while ($data = fgetcsv($myfile, 0, ";")) {
 
         $checkNumber = substr($data[3], 1, 1);
 
