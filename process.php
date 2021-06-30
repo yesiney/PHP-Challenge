@@ -83,7 +83,6 @@ foreach ($fileList as $filename) {
     echo "output created : $outputFilename" . PHP_EOL;
 
     if (file_exists(OUTPUT_PATH . "/$outputFilename")) {
-        echo"Fİle exist" . PHP_EOL;;
         $success = rename("$filename", ARCHIVE_PATH . '/' .basename($filename));
         if ($success){
             echo "Moved file!" . PHP_EOL;
