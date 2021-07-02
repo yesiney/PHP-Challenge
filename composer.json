@@ -1,0 +1,16 @@
+{
+    "name": "yenis/php-challenge",
+    "description": "php challenge #1",
+    "type": "project",
+    "require-dev": {
+        "phpstan/phpstan": "^0.12.90",
+        "squizlabs/php_codesniffer": "^3.6"
+    },
+    "authors": [
+        {
+            "name": "yesiney",
+            "email": "yeniseys16@gmail.com"
+        }
+    ],
+    "require": {}
+}

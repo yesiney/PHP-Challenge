@@ -1,0 +1,4 @@
+fonksiyona çevirebileceğin işlev parçaları
+closure && array_map kullanımı
+
+class && namespace ve autoloading
