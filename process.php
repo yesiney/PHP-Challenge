@@ -115,16 +115,16 @@ foreach ($fileList as $filename) {
         if (empty($data[1]) || $checkNumber != "," && $checkNumber != "") {
             continue;
         }
-
         $xml->startElement('line');
-        $xml->writeElement($line[0], $data[0]);
-        $xml->writeElement($line[1], $data[1]);
-        $xml->writeElement($line[2], convertChars($data[2]));
-        $xml->writeElement($line[3], $data[3]);
-        $xml->writeElement($line[4], $data[4]);
-        $xml->writeElement($line[5], $data[5]);
-        $xml->writeElement($line[6], $data[6]);
-        $xml->writeElement($line[7], setDateLatest($data[7]));
+        for ($i = 0; $i < 7; $i++) {
+            if ($i == 2) {
+                $xml->writeElement($line[2], convertChars($data[2]));
+            } elseif ($i == 7) {
+                $xml->writeElement($line[7], convertChars($data[7]));
+            } else {
+                $xml->writeElement($line[$i], $data[$i]);
+            }
+        }
         $xml->endElement();
     }
 
