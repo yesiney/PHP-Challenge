@@ -89,10 +89,15 @@ foreach ($fileList as $filename) {
         exit(0);
     }
 
-    $xml->writeElement($line[1], $data[1]);
-    $xml->writeElement($line[2], setDate($data[2]));
-    $xml->writeElement($line[3], setDate($data[3]));
-    $xml->writeElement($line[4], $data[4]);
+    for ($i = 0; $i < 5; $i++) {
+        if ($i == 2) {
+            $xml->writeElement($line[2], setDate($data[2]));
+        } elseif ($i == 3) {
+            $xml->writeElement($line[3], setDate($data[3]));
+        } else {
+            $xml->writeElement($line[$i], $data[$i]);
+        }
+    }
     $xml->endElement();
 
     $line = fgetcsv($myfile, 0, ";");
@@ -116,11 +121,11 @@ foreach ($fileList as $filename) {
             continue;
         }
         $xml->startElement('line');
-        for ($i = 0; $i < 7; $i++) {
+        for ($i = 0; $i < 8; $i++) {
             if ($i == 2) {
                 $xml->writeElement($line[2], convertChars($data[2]));
             } elseif ($i == 7) {
-                $xml->writeElement($line[7], convertChars($data[7]));
+                $xml->writeElement($line[7], setDateLatest($data[7]));
             } else {
                 $xml->writeElement($line[$i], $data[$i]);
             }
