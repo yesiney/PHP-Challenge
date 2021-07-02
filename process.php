@@ -67,22 +67,28 @@ foreach ($fileList as $filename) {
     $xml->startElement('order');
     $xml->startElement('header');
 
-    function checkArray(bool $temp): void
-    {
-        if (false === $temp) {
-            echo "There is no data!" . PHP_EOL;
-            exit(0);
+    $line = fgetcsv($myfile, 0, ";");
+    if (is_array($line)) {
+        foreach ($line as $key => $value) {
+            if (!isset($value)) {
+                echo "$key empty" . PHP_EOL;
+                exit(0);
+            }
         }
+    } else {
+        exit(0);
+    }
+    $data = fgetcsv($myfile, 0, ";");
+    if (is_array($data)) {
+        foreach ($data as $key => $value) {
+            if (!isset($value)) {
+                echo "$key empty" . PHP_EOL;
+            }
+        }
+    } else {
+        exit(0);
     }
 
-    $line = fgetcsv($myfile, 0, ";");
-    array_map("checkArray", (array)$line);
-
-    $data = fgetcsv($myfile, 0, ";");
-    array_map("checkArray", (array)$data);
-
-
-    $xml->writeElement($line[0], $data[0]);
     $xml->writeElement($line[1], $data[1]);
     $xml->writeElement($line[2], setDate($data[2]));
     $xml->writeElement($line[3], setDate($data[3]));
@@ -90,6 +96,16 @@ foreach ($fileList as $filename) {
     $xml->endElement();
 
     $line = fgetcsv($myfile, 0, ";");
+    if (is_array($line)) {
+        foreach ($line as $key => $value) {
+            if (!isset($value)) {
+                echo "$key empty" . PHP_EOL;
+                exit(0);
+            }
+        }
+    } else {
+        exit(0);
+    }
 
     $xml->startElement('lines');
 
