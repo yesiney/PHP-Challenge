@@ -38,7 +38,6 @@ const ARCHIVE_PATH = __DIR__ . '/archive';
 
 const INPUT_EXT = '.txt';
 
-//Get a list of file paths using the glob function.
 $fileList = glob(INPUT_PATH . '/*' . INPUT_EXT);
 
 if (false === $fileList) {
@@ -46,7 +45,6 @@ if (false === $fileList) {
     exit(0);
 }
 
-//Loop through the array that glob returned.
 foreach ($fileList as $filename) {
     echo "current : " . basename($filename) . PHP_EOL;
 
@@ -90,13 +88,7 @@ foreach ($fileList as $filename) {
     }
 
     for ($i = 0; $i < 5; $i++) {
-        if ($i == 2) {
-            $xml->writeElement($line[2], setDate($data[2]));
-        } elseif ($i == 3) {
-            $xml->writeElement($line[3], setDate($data[3]));
-        } else {
-            $xml->writeElement($line[$i], $data[$i]);
-        }
+        $xml->writeElement($line[$i], in_array($i, [2, 3]) ? setDate($data[$i]) : $data[$i]);
     }
     $xml->endElement();
 
@@ -123,9 +115,9 @@ foreach ($fileList as $filename) {
         $xml->startElement('line');
         for ($i = 0; $i < 8; $i++) {
             if ($i == 2) {
-                $xml->writeElement($line[2], convertChars($data[2]));
+                $xml->writeElement($line[$i], convertChars($data[$i]));
             } elseif ($i == 7) {
-                $xml->writeElement($line[7], setDateLatest($data[7]));
+                $xml->writeElement($line[$i], setDateLatest($data[$i]));
             } else {
                 $xml->writeElement($line[$i], $data[$i]);
             }
