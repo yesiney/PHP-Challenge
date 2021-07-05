@@ -31,6 +31,18 @@ function setDateLatest(string $temp): string
     $date = new DateTime($temp);
     return $date->format('ymd');
 }
+/**
+ * @param array<string, Value> $temp
+ */
+function checkArray(array &$temp): void
+{
+    foreach ($temp as $key => $value) {
+        if (empty($value)) {
+            echo "$key empty" . PHP_EOL;
+            exit(0);
+        }
+    }
+}
 
 const INPUT_PATH = __DIR__ . '/input';
 const OUTPUT_PATH = __DIR__ . '/output';
@@ -66,26 +78,10 @@ foreach ($fileList as $filename) {
     $xml->startElement('header');
 
     $line = fgetcsv($myfile, 0, ";");
-    if (is_array($line)) {
-        foreach ($line as $key => $value) {
-            if (!isset($value)) {
-                echo "$key empty" . PHP_EOL;
-                exit(0);
-            }
-        }
-    } else {
-        exit(0);
-    }
+    checkArray($line);
+
     $data = fgetcsv($myfile, 0, ";");
-    if (is_array($data)) {
-        foreach ($data as $key => $value) {
-            if (!isset($value)) {
-                echo "$key empty" . PHP_EOL;
-            }
-        }
-    } else {
-        exit(0);
-    }
+    checkArray($data);
 
     for ($i = 0; $i < 5; $i++) {
         $xml->writeElement($line[$i], in_array($i, [2, 3]) ? setDate($data[$i]) : $data[$i]);
@@ -93,16 +89,7 @@ foreach ($fileList as $filename) {
     $xml->endElement();
 
     $line = fgetcsv($myfile, 0, ";");
-    if (is_array($line)) {
-        foreach ($line as $key => $value) {
-            if (!isset($value)) {
-                echo "$key empty" . PHP_EOL;
-                exit(0);
-            }
-        }
-    } else {
-        exit(0);
-    }
+    checkArray($line);
 
     $xml->startElement('lines');
 
@@ -112,15 +99,13 @@ foreach ($fileList as $filename) {
         if (empty($data[1]) || $checkNumber != "," && $checkNumber != "") {
             continue;
         }
+
         $xml->startElement('line');
+
         for ($i = 0; $i < 8; $i++) {
-            if ($i == 2) {
-                $xml->writeElement($line[$i], convertChars($data[$i]));
-            } elseif ($i == 7) {
-                $xml->writeElement($line[$i], setDateLatest($data[$i]));
-            } else {
-                $xml->writeElement($line[$i], $data[$i]);
-            }
+            $xml->writeElement($line[$i], $i == 2 ? convertChars($data[$i]) :
+            ($i == 7 ? setDateLatest($data[$i]) :
+            $data[$i]));
         }
         $xml->endElement();
     }
