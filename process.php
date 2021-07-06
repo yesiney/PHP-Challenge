@@ -15,38 +15,10 @@
 const TR_CHARS = array("ı", "ğ", "ü", "ş", "ö", "ç", "Ç", "Ş", "İ", "Ü", "Ö"); //turkish letters
 const EN_CHARS = array("i", "g", "u", "s", "o", "c", "C", "S", "I", "U", "O"); //english cooridinators letters
 
-function convertChars(string $temp): string
-{
-    return str_replace(TR_CHARS, EN_CHARS, $temp);
-}
-
-function setDate(string $temp): string
-{
-    $date = new DateTime($temp);
-    return $date->format('Y-m-d H:i:s');
-}
-
-function setDateLatest(string $temp): string
-{
-    $date = new DateTime($temp);
-    return $date->format('ymd');
-}
-/**
- * @param array<string, Value> $temp
- */
-function checkArray(array &$temp): void
-{
-    foreach ($temp as $key => $value) {
-        if (empty($value)) {
-            echo "$key empty" . PHP_EOL;
-            exit(0);
-        }
-    }
-}
-
 const INPUT_PATH = __DIR__ . '/input';
 const OUTPUT_PATH = __DIR__ . '/output';
 const ARCHIVE_PATH = __DIR__ . '/archive';
+const ERROR_PATH = __DIR__ . '/error';
 
 const INPUT_EXT = '.txt';
 
@@ -70,6 +42,30 @@ foreach ($fileList as $filename) {
     $outputFilename = "output-" . str_replace('.', '', (string)microtime(true)) . '.xml';
     $outputPath = OUTPUT_PATH . "/$outputFilename";
 
+    $headerTitles = fgetcsv($myfile, 0, ";");
+
+    if (false === $headerTitles || null === $headerTitles || null === $headerTitles[0]) {
+        echo "Header titles is empty!" . PHP_EOL;
+        moveFile(ERROR_PATH);
+        continue;
+    }
+
+    $headerValues = fgetcsv($myfile, 0, ";");
+
+    if (false === $headerValues || null === $headerValues || null === $headerValues[0]) {
+        echo "Header values are empty!" . PHP_EOL;
+        moveFile(ERROR_PATH);
+        continue;
+    }
+
+    $detailTitles = fgetcsv($myfile, 0, ";");
+
+    if (false === $detailTitles || null === $detailTitles || null === $detailTitles[0]) {
+        echo "Detail titles are empty!" . PHP_EOL;
+        moveFile(ERROR_PATH);
+        continue;
+    }
+
     $xml = new XMLWriter();
     $xml->openURI($outputPath);
     $xml->setIndent(true);
@@ -77,35 +73,26 @@ foreach ($fileList as $filename) {
     $xml->startElement('order');
     $xml->startElement('header');
 
-    $line = fgetcsv($myfile, 0, ";");
-    checkArray($line);
-
-    $data = fgetcsv($myfile, 0, ";");
-    checkArray($data);
-
     for ($i = 0; $i < 5; $i++) {
-        $xml->writeElement($line[$i], in_array($i, [2, 3]) ? setDate($data[$i]) : $data[$i]);
+        $xml->writeElement($headerTitles[$i], in_array($i, [2, 3]) ? setDate($headerValues[$i]) : $headerValues[$i]);
     }
     $xml->endElement();
 
-    $line = fgetcsv($myfile, 0, ";");
-    checkArray($line);
-
     $xml->startElement('lines');
 
-    while ($data = fgetcsv($myfile, 0, ";")) {
-        $checkNumber = substr($data[3], 1, 1);
+    while ($headerValues = fgetcsv($myfile, 0, ";")) {
+        $checkNumber = substr($headerValues[3], 1, 1);
 
-        if (empty($data[1]) || $checkNumber != "," && $checkNumber != "") {
+        if (empty($headerValues[1]) || $checkNumber != "," && $checkNumber != "") {
             continue;
         }
 
         $xml->startElement('line');
 
         for ($i = 0; $i < 8; $i++) {
-            $xml->writeElement($line[$i], $i == 2 ? convertChars($data[$i]) :
-            ($i == 7 ? setDateLatest($data[$i]) :
-            $data[$i]));
+            $xml->writeElement($detailTitles[$i], $i == 2 ? convertChars($headerValues[$i]) :
+            ($i == 7 ? setDateLatest($headerValues[$i]) :
+            $headerValues[$i]));
         }
         $xml->endElement();
     }
@@ -118,13 +105,36 @@ foreach ($fileList as $filename) {
     echo "output created : $outputFilename" . PHP_EOL;
 
     if (file_exists(OUTPUT_PATH . "/$outputFilename")) {
-        $success = rename("$filename", ARCHIVE_PATH . '/' . basename($filename));
-        if ($success) {
-            echo "Moved file!" . PHP_EOL;
-        } else {
-            echo "Failed to move file!" . PHP_EOL;
-        }
+        moveFile(ARCHIVE_PATH);
     } else {
         echo "File does not exist" . PHP_EOL;
+    }
+}
+
+function convertChars(string $temp): string
+{
+    return str_replace(TR_CHARS, EN_CHARS, $temp);
+}
+
+function setDate(string $temp): string
+{
+    $date = new DateTime($temp);
+    return $date->format('Y-m-d H:i:s');
+}
+
+function setDateLatest(string $temp): string
+{
+    $date = new DateTime($temp);
+    return $date->format('ymd');
+}
+
+function moveFile(string $path): void
+{
+    global $filename;
+    $success = rename("$filename", $path . '/' . basename($filename));
+    if ($success) {
+        echo "Moved file!" . PHP_EOL;
+    } else {
+        echo "Failed to move file!" . PHP_EOL;
     }
 }
