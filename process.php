@@ -12,6 +12,7 @@
  * @link     http://localhost/
  */
 
+//deneme
 const TR_CHARS = array("ı", "ğ", "ü", "ş", "ö", "ç", "Ç", "Ş", "İ", "Ü", "Ö"); //turkish letters
 const EN_CHARS = array("i", "g", "u", "s", "o", "c", "C", "S", "I", "U", "O"); //english cooridinators letters
 
